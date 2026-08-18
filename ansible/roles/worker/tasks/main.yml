@@ -1,0 +1,16 @@
+---
+- name: Get join command from control plane
+  slurp:
+    src: /tmp/kubeadm_join_cmd.sh
+  register: join_command_raw
+  delegate_to: control-plane
+  run_once: true
+
+- name: Set join command fact
+  set_fact:
+    kubeadm_join_cmd: "{{ join_command_raw.content | b64decode }}"
+
+- name: Join Kubernetes cluster
+  command: "{{ kubeadm_join_cmd }}"
+  args:
+    creates: /etc/kubernetes/kubelet.conf

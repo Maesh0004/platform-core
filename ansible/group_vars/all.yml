@@ -1,0 +1,6 @@
+---
+kubernetes_version: "1.29"
+
+pod_network_cidr: "192.168.0.0/16"
+
+container_runtime: "containerd"

@@ -1,0 +1,41 @@
+---
+- name: Add Prometheus Helm repository
+  command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  register: repo_add
+  failed_when: false
+  changed_when: "'already exists' not in repo_add.stderr"
+
+- name: Update Helm repositories
+  command: helm repo update
+  changed_when: false
+
+- name: Deploy kube-prometheus-stack
+  command: >
+    helm upgrade --install monitoring
+    prometheus-community/kube-prometheus-stack
+    --namespace monitoring
+    --create-namespace
+  environment:
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+- name: Copy Grafana ingress
+  copy:
+    src: grafana-ingress.yaml
+    dest: /tmp/grafana-ingress.yaml
+
+- name: Deploy Grafana ingress
+  command:
+    cmd: kubectl apply -f /tmp/grafana-ingress.yaml
+  environment:
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+
+- name: Copy Prometheus ingress
+  copy:
+    src: prometheus-ingress.yaml
+    dest: /tmp/prometheus-ingress.yaml
+
+- name: Deploy Prometheus ingress
+  command:
+    cmd: kubectl apply -f /tmp/prometheus-ingress.yaml
+  environment:
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+  

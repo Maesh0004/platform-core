@@ -1,0 +1,35 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Variables
+*.tfvars
+*.tfvars.json
+
+# Ignore local Ansible inventory and private keys
+ansible/inventory.ini
+ansible/ansible.cfg
+*.pem
+
+# Crash logs
+crash.log
+*.venv/*
+
+
+# Ignore virtual environment folders
+venv/
+.env/
+.venv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore IDE/project settings
+.vscode/
+.idea/
+

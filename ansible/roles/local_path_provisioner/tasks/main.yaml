@@ -1,0 +1,28 @@
+---
+- name: Install local path provisioner
+  command:
+    cmd: kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml
+  environment:
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+
+- name: Wait for local path provisioner
+  command:
+    cmd: kubectl wait --namespace local-path-storage --for=condition=ready pod --selector=app=local-path-provisioner --timeout=300s
+  environment:
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+
+- name: Check default storage class
+  shell: |
+    kubectl get storageclass local-path -o jsonpath='{.metadata.annotations.storageclass\.kubernetes\.io/is-default-class}'
+  register: sc_default
+  changed_when: false
+  failed_when: false
+  environment:
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+
+- name: Set local-path as default
+  command:
+    cmd: kubectl patch storageclass local-path -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+  when: sc_default.stdout != "true"
+  environment:
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
