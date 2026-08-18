@@ -1,0 +1,18 @@
+[k8s_control_plane]
+# control-plane ansible_host=13.232.66.166  # replace with your control plane IP/hostname
+
+[k8s_workers]
+# worker1 ansible_host=15.206.89.88       # replace with your worker IP(s)/hostnames
+
+[k8s_cluster:children]
+k8s_control_plane
+k8s_workers
+
+[k8s_cluster:vars]
+# Common cluster vars — adapt to your environment
+ansible_user=ubuntu
+# ansible_ssh_private_key_file: set to your SSH key path
+ansible_ssh_private_key_file=~/.ssh/my-keypair.pem
+
+# Note: This is an example file. Replace placeholders with values appropriate
+# for your environment before using.

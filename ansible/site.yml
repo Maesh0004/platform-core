@@ -1,0 +1,27 @@
+--- 
+- name: Configure Kubernetes nodes 
+  hosts: k8s_cluster 
+  become: yes 
+  roles: 
+    - common 
+
+- name: Configure Kubernetes control plane 
+  hosts: k8s_control_plane 
+  become: yes 
+  roles: 
+    - control_plane 
+
+- name: Configure Kubernetes worker nodes 
+  hosts: k8s_workers 
+  become: yes 
+  roles: 
+    - worker
+
+- name: Install Kubernetes platform services
+  hosts: k8s_control_plane 
+  become: yes 
+  roles: 
+    - helm
+    - ingress_nginx
+    - local_path_provisioner
+    - monitoring
